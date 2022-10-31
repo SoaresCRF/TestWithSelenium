@@ -1,5 +1,5 @@
 import os
-
+import unittest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 def get_path_with_file_name(filename: str) -> str:
     return os.getcwd() + filename
+
 
 def configure_selenium() -> webdriver:
     service = Service(ChromeDriverManager().install())
@@ -18,19 +19,53 @@ def configure_selenium() -> webdriver:
     print("test")
     return driver
 
-def test_email_is_invalid():
-    # Assert
-    driver: webdriver = configure_selenium()
-    element_search_field = driver.find_element(By.ID, "email")
-    element_search_field.send_keys("dasdasdasdasddsddsd")
-    element_password_field = driver.find_element(By.ID, "password")
-    element_password_field.send_keys("123456789")
-    element_button_submit_search = driver.find_element(By.ID, "signin")
 
-    # Act
-    element_button_submit_search.click()
+class MyTestCase(unittest.TestCase):
+    def test_email_is_invalid(self):
+        # Assert
+        driver: webdriver = configure_selenium()
+        element_search_field = driver.find_element(By.ID, "email")
+        element_search_field.send_keys("dasdasdasdasddsddsd")
+        element_password_field = driver.find_element(By.ID, "password")
+        element_password_field.send_keys("123456789")
+        element_button_submit_search = driver.find_element(By.ID, "signin")
 
-    # Assert
-    element_message_feedback = driver.find_element(By.ID, "messageFeedback").text
-    assert element_message_feedback == "Invalid format email!"
+        # Act
+        element_button_submit_search.click()
 
+        # Assert
+        element_message_feedback = driver.find_element(By.ID, "messageFeedback").text
+        self.assertEquals(element_message_feedback, "Invalid format email!")
+
+    def test_email_is_valid(self):
+        # Assert
+        driver: webdriver = configure_selenium()
+        element_search_field = driver.find_element(By.ID, "email")
+        element_search_field.send_keys("test@example.com")
+        element_password_field = driver.find_element(By.ID, "password")
+        element_password_field.send_keys("123456789")
+        element_button_submit_search = driver.find_element(By.ID, "signin")
+
+        # Act
+        element_button_submit_search.click()
+
+        # Assert
+        element_message_feedback = driver.find_element(By.ID, "messageFeedback").text
+        self.assertEquals(element_message_feedback,
+                          "Username and password correct, you will be redirect to adminsitrador page wait.")
+
+    def test_filled_fields(self):
+        # Assert
+        driver: webdriver = configure_selenium()
+        element_button_submit_search = driver.find_element(By.ID, "signin")
+
+        # Act
+        element_button_submit_search.click()
+
+        # Assert
+        element_message_feedback = driver.find_element(By.ID, "messageFeedback").text
+        self.assertEquals(element_message_feedback, "Username and password will be filled!")
+
+
+if __name__ == '__main__':
+    unittest.main()
