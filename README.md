@@ -1,2 +1,2 @@
-# Aula5-TestComSelenium
- Teste de sistemas - Test com selenium
+# Test With Selenium - Aula5
+ Atividade para realizar um teste de sistema utilizando selenium
